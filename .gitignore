@@ -3,8 +3,18 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+data/
+chroma_db/
+
 # C extensions
 *.so
+
+
+node_modules/
+.env
+dist/
+build/
+npm-debug.log
 
 # Distribution / packaging
 .Python
