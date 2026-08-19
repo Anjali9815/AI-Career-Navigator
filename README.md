@@ -44,6 +44,20 @@ Your question → embed → query vector
                               ↓
               Stuff into Claude's prompt as context
 
+## Setup
+
+Before running the backend, export your Gemini API key:
+
+```bash
+export GOOGLE_API_KEY="your-key-here"
+```
+
+Then launch the backend from the project root:
+
+```bash
+./venv/bin/python -m uvicorn backend.main:app
+```
+
 
 
 
