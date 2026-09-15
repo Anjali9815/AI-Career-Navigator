@@ -16,40 +16,6 @@ warnings.filterwarnings("ignore", category=UserWarning, module="urllib3")
 from backend.core.config import CHROMA_DIR, PROFILES_PATH, COLLECTION_NAME
 reranker = CrossEncoder("cross-encoder/ms-marco-MiniLM-L-6-v2")
 
-# def hybrid_search(query, k=3):
-#     """Combines Dense Vectors and BM25 Keywords to prevent token blurring."""
-#     # 1. Connect to your active Chroma instance
-#     chroma_db = Chroma(
-#         collection_name="people_collection_v1_1",
-#         persist_directory=CHROMA_DIR,
-#         embedding_function=get_embedder(),
-#     )
-#     # Turn Chroma into a standard LangChain retriever
-#     vector_retriever = chroma_db.as_retriever(search_kwargs={"k": k})
-
-#     # 2. Extract profile texts directly to instantiate BM25 keyword matching
-#     with open(PROFILES_PATH, "r", encoding="utf-8") as f:
-#         profiles = json.load(f)
-    
-#     # Wrap text strings into LangChain Document formats for the retriever
-#     from langchain_core.documents import Document
-#     documents = [
-#         Document(page_content=profile_to_text(p), metadata={"name": p.get("name"), "source": p.get("source")})
-#         for p in profiles
-#     ]
-    
-#     bm25_retriever = BM25Retriever.from_documents(documents)
-#     bm25_retriever.k = k
-
-#     # 3. Create the Ensemble Engine (50% Semantic understanding, 50% Keyword precision)
-#     ensemble_retriever = EnsembleRetriever(
-#         retrievers=[vector_retriever, bm25_retriever],
-#         weights=[0.5, 0.5]
-#     )
-
-#     # Query the RRF pipeline
-#     return ensemble_retriever.invoke(query)
-
 
 def final_production_search(query, top_k=3):
     """
@@ -58,7 +24,7 @@ def final_production_search(query, top_k=3):
     """
     # ---- STAGE 1: HYBRID RETRIEVAL (Ensures we don't miss exact keywords) ----
     chroma_db = Chroma(
-        collection_name="people_collection_v1_1",
+        collection_name="people_collection_v1_2",
         persist_directory=CHROMA_DIR,
         embedding_function=get_embedder(),
     )
@@ -72,6 +38,7 @@ def final_production_search(query, top_k=3):
         Document(page_content=profile_to_text(p), metadata={"name": p.get("name"), "source": p.get("source")})
         for p in profiles
     ]
+    
     # Pull 10 total candidates from keyword space
     bm25_retriever = BM25Retriever.from_documents(documents)
     bm25_retriever.k = 10
@@ -131,7 +98,7 @@ if __name__ == "__main__":
         texts=texts,
         metadatas=metadatas,
         embedding=get_embedder(),
-        collection_name="people_collection_v1_1",  # Renamed collection to completely invalidate any lingering memory cache
+        collection_name="people_collection_v1_2",  # Renamed collection to completely invalidate any lingering memory cache
         persist_directory=CHROMA_DIR,
     )
 

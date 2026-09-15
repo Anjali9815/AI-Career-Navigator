@@ -5,16 +5,31 @@ warnings.filterwarnings("ignore", category=UserWarning, module="urllib3")
 from backend.src.extract import get_llm
 RELEVANCE_THRESHOLD = -8.10
 
+HARD_FLOOR = -10.0
 
 def generate_context_prompt(query: str) -> str:
     raw_results = final_production_search(query, top_k=3)
 
-    valid_results = [
-        (doc, score) for doc, score in raw_results if score >= RELEVANCE_THRESHOLD
-    ]
+    raw = final_production_search("who is good in knowledge graph", top_k=3)
+    for doc, score in raw:
+        print(score, doc.metadata["name"])
 
-    if not valid_results:
+
+    if not raw_results:
         return None
+
+    
+
+    valid_results = [(doc, score) for doc, score in raw_results if score >= RELEVANCE_THRESHOLD]
+    low_confidence = False
+    if not valid_results:
+        best_score = raw_results[0][1]
+        if best_score >= HARD_FLOOR:
+            valid_results = [raw_results[0]] 
+            low_confidence = True
+        else:
+            return None
+    
 
     profile_texts = []
     for rank, (doc, _) in enumerate(valid_results, start=1):
@@ -62,8 +77,9 @@ def ask_career_navigator(query: str) -> str:
     return response.content
 
 if __name__ == "__main__":
-    valid_query = "worked on vue.js, c# and .net"
+    # valid_query = "worked on vue.js, c# and .net"
     garbage_query = "how to bake sourdough bread"
+    new_query = "who is good in knowledge graph"
 
     # valid_prompt = generate_context_prompt(valid_query)
     # print(valid_prompt)
@@ -71,6 +87,8 @@ if __name__ == "__main__":
     # garbage_prompt = generate_context_prompt(garbage_query)
     # print(f"Result for garbage query: '{garbage_prompt}'")
 
-    print(ask_career_navigator(valid_query))
-    print("\n garbage", garbage_query)
+    # print(ask_career_navigator(valid_query))
+    # print("\n garbage", garbage_query)
     print(ask_career_navigator(garbage_query))
+    print(ask_career_navigator(new_query))
+
