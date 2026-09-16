@@ -1,16 +1,22 @@
 from collections import defaultdict
 import json
 import os
+from datetime import datetime
 from langsmith import Client, evaluate
 from backend.src.vectorstore import final_production_search
-from backend.core.config import JSON_DIR, DATASET_NAME, DISTANCE_THRESHOLD
+from backend.core.config import BASE_DIR, JSON_DIR, DATASET_NAME, DISTANCE_THRESHOLD
+from dotenv import load_dotenv
+load_dotenv()
+
+from backend.core.logger import get_logger
+log = get_logger("run_eval")
 
 client = Client()
 
 def load_json_file(file_path):
     with open(file_path, "r") as f:
         query_data = json.load(f)
-        print(query_data)
+        log.info("Loaded query data: %d items", len(query_data))
 
     if not client.has_dataset(dataset_name=DATASET_NAME):
         dataset = client.create_dataset(
@@ -29,7 +35,7 @@ def load_json_file(file_path):
                 },
             })
         client.create_examples(dataset_id=dataset.id, examples = examples)
-        print("Successfully data created in Langsmith")
+        log.info("Successfully created data in Langsmith")
         pass
 
 def run_vector_search(inputs : dict)-> dict:
@@ -69,5 +75,14 @@ if __name__ == "__main__":
         evaluators=[profile_match_grader],
         experiment_prefix="Hybrid-Rerank-Production-v1"
     )
-    print("Evaluation execution complete.")
+    log.info("Evaluation execution complete.")
+    stamp = datetime.now().strftime("%Y%m%d_%H%M")
+
+    df = experiment_result.to_pandas()
+    out = os.path.join(BASE_DIR, "evals", "results", f"retrieval_{stamp}.csv")
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    df.to_csv(out, index=False)
+    score = df["feedback.correct_retrieval"].mean()
+    log.info("correct_retrieval: %.3f over %d cases", score, len(df))
+    log.info("Saved results to %s", out)
 

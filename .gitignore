@@ -9,6 +9,10 @@ fresh_chroma_db_v1/
 # C extensions
 *.so
 .DS_Store
+.DS_Store
+**/.DS_Store
+
+.DS_Store
 
 node_modules/
 .env

@@ -1,5 +1,6 @@
 import os
 import json
+from unittest import result
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
@@ -40,8 +41,8 @@ async def health_checkup():
 async def chat_endpoint(payload: ChatRequest):
     try:
         # Run the incoming text query through your fixed career navigator logic
-        answer = ask_career_navigator(payload.query)
-        return {"answer": answer}
+        result = ask_career_navigator(payload.query)
+        return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"API Error: {str(e)}")
 

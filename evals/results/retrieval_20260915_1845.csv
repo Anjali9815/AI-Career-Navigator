@@ -1,0 +1,21 @@
+inputs.query,outputs.matched_name,outputs.score,error,reference.should_match,reference.expected_names,feedback.correct_retrieval,execution_time,example_id,id
+deep sea fishing and boat repair,"Jason Piccone, Ph.D.",-11.077431678771973,,False,[],1,2.083783,0d995dd5-8c9a-466a-a01b-16a4c91bd84c,8761d227-55f8-4d9c-a537-d299a2caf3e1
+Who worked in Large Scale Development,Megha Singh,1.4892182350158691,,True,['Megha Singh'],1,1.90185,1c16fd27-e271-43fb-8472-630062f6fa01,efb3195c-1f79-4df3-8c3d-7576bea59979
+cybersecurity researcher,Anthony Dewey,5.510123252868652,,True,['Anthony Dewey'],1,1.937747,3d38b3f3-fa73-4526-a7ae-c205dd842a1b,d031b9a5-0134-4aeb-8212-d198dda03294
+robotics and computer vision background,TEJASHREE BETGAR,-3.1720638275146484,,True,['Tejashree Betgar'],0,1.999146,3e7ae35f-4004-455c-8222-61423251139a,ae9f3a87-1f15-4768-a7d4-99bb525dafc3
+professional football coaching career,Mrunal Jadhav,-8.962882995605469,,False,[],1,2.054142,4c7da31a-2f82-43f6-b857-9ba47d2deeb0,2b765b1d-fca6-49b2-916c-bafce6add0d5
+Who is working at Booz Allen,Seun Sogbola,5.765721321105957,,True,['Seun Sogbola'],1,1.988057,515b46b1-e16f-4fd9-8bcd-9c8c7c046cf3,85576fe0-bbdd-423c-98f5-d20b4d820e00
+Who knows Chienese,TEJASHREE BETGAR,-11.11283016204834,,True,['Julia Wen'],0,1.897573,5a4f0845-a501-47a8-88b3-3c378725efa2,f15c5bb2-e3d5-4f17-8a18-a01b4817e9bf
+how to bake sourdough bread,Anthony Dewey,-11.086852073669434,,False,[],1,2.03654,62fd7e38-a831-4fc1-b797-9ca757bb2bd4,4c3560b9-82a0-4676-9a68-c0b0068cd631
+Who worked at Meta,Minhaz M.,2.8044934272766113,,True,['Minhaz M.'],1,1.95932,78611e6a-7cfb-454c-942a-17e07bf16456,c4588c06-198a-4f0b-9862-3e45f780f6b4
+MLOps and agentic AI experience,Kavya Praneetha Vellanki,4.097893714904785,,True,"['Kavya Praneetha Vellanki', 'J Shivam Verma']",1,1.802294,7b07e512-8a1f-4c6d-9fe7-5b07ce64a9f6,0a89792b-2fa0-4bfe-bcae-54f8e5f42225
+data engineer with CI/CD experience,Seun Sogbola,4.046066761016846,,True,['Seun Sogbola'],1,1.897203,8063a8f2-8d3a-4358-9f30-24be3dfa636c,65d2eae9-63ce-4e3d-9d57-28ea0a13e8cb
+worked at Cognizant then went to grad school,Gayatri Thakur,-1.0529720783233643,,True,['Gayatri Thakur'],1,2.274625,81b5d5fb-cb4d-44f4-84cb-41f96d5df140,ad503618-585d-4bec-a5e3-700422738d14
+"CS student with Python internship, wants data roles",Sruthi Velpula,2.1004536151885986,,True,['Sruthi Velpula'],1,1.933236,953a877e-d0f8-4b2e-b38a-1108fd69b3b7,a5718511-917e-433d-bfcd-4c569cc0ac4f
+"worked on vue.js, c# and .net",Megha Singh,1.2570929527282715,,True,['Megha Singh'],1,1.795039,96848fcb-5aca-433f-b0c3-60ba50e3a654,2be7f8d3-4f18-4e44-9243-4aa198a4824d
+I studied electronics and communication engineering and want to move into data analysis,Sruthi Velpula,1.604099988937378,,True,"['Sruthi Velpula', 'Shradha Gawad']",1,1.987815,9f374c6a-1a01-41f2-afda-1dec615b4777,738d4d51-72e7-4c3c-b75c-da3871cef83c
+Cooking Rasmalai,TEJASHREE BETGAR,-11.290136337280273,,False,[],1,1.912796,ada8e821-5aa4-4c64-b05b-7e7aa4fe70e1,ef22c467-65fe-4ff1-8b28-988355303513
+who have Knowledge graph expereince,TEJASHREE BETGAR,-7.26840877532959,,True,['Tejashree Betgar'],0,2.009829,adc56f84-2596-4251-922c-cf97e391ed22,90a50c7e-1a9c-45cf-b07c-7c311e2c1401
+technical recruiting and talent acquisition,Boopalan C,5.381553649902344,,True,['Boopalan C'],1,1.841409,b7fcfea3-8fea-4841-97d7-5dc81eaf0e9a,68d28674-fd08-42c7-aaee-da15993f8f1d
+Working as Bus Driver,TEJASHREE BETGAR,-10.26920223236084,,False,[],1,2.143859,cbad52d3-653c-4377-9bf5-feaa30fe3a07,80facf57-bdf2-4195-8b5a-1104e0cecad5
+Domain experience in Finance,Kavya Praneetha Vellanki,-4.37330961227417,,True,['Sonal Naveen Meda'],0,1.883233,e8c11a44-b888-45dc-9c78-65672a946dab,bd84e1d5-6ca0-4a32-a3a2-4d6938959612

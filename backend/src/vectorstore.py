@@ -1,3 +1,5 @@
+from backend.core.logger import get_logger
+log = get_logger("Vectorstore")
 import json
 import os
 import shutil
@@ -24,7 +26,7 @@ def final_production_search(query, top_k=3):
     """
     # ---- STAGE 1: HYBRID RETRIEVAL (Ensures we don't miss exact keywords) ----
     chroma_db = Chroma(
-        collection_name="people_collection_v1_2",
+        collection_name="people_collection_v1_3",
         persist_directory=CHROMA_DIR,
         embedding_function=get_embedder(),
     )
@@ -75,7 +77,7 @@ def final_production_search(query, top_k=3):
 if __name__ == "__main__":
     # 1. Force remove any local 'fresh_chroma_db' folder to wipe previous memory
     if os.path.exists(CHROMA_DIR):
-        print(f"Wiping out previous cache directory at: {CHROMA_DIR}")
+        log.info(f"Wiping out previous cache directory at: {CHROMA_DIR}")
         shutil.rmtree(CHROMA_DIR)
 
     # 2. Extract profile JSON data
@@ -98,12 +100,12 @@ if __name__ == "__main__":
         texts=texts,
         metadatas=metadatas,
         embedding=get_embedder(),
-        collection_name="people_collection_v1_2",  # Renamed collection to completely invalidate any lingering memory cache
+        collection_name="people_collection_v1_3",  # Renamed collection to completely invalidate any lingering memory cache
         persist_directory=CHROMA_DIR,
     )
 
 
-    print("VERIFICATION CHECK")
-    print(f"Target Storage Location : {CHROMA_DIR}")
-    print(f"Total Profiles Written : {db._collection.count()}")
+    log.info("VERIFICATION CHECK")
+    log.info(f"Target Storage Location : {CHROMA_DIR}")
+    log.info(f"Total Profiles Written : {db._collection.count()}")
 
