@@ -327,6 +327,38 @@ button {
   border: 2px solid var(--surface);
 }
 
+
+/* ── connect link ──────────────────────────────────────────────────────────
+   Append to styles/index.css.                                             */
+
+.match__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 20px;
+  padding: 9px 15px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.match__link:hover {
+  background: var(--accent-soft);
+  border-color: #cfd9ea;
+}
+
+/* Small arrow so it reads as leaving the page */
+.match__link::after {
+  content: "→";
+  font-size: 15px;
+  line-height: 1;
+}
+
 /* Education markers are hollow, so a degree reads differently from a job */
 .timeline__item--education::before {
   background: var(--surface);

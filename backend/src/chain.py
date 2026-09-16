@@ -1,12 +1,12 @@
-import os, json
+import json
 import warnings
 from typing import List, Optional
 
 from pydantic import BaseModel, Field
 
-from backend.src.vectorstore import final_production_search
 from backend.src.extract import get_llm
-from backend.src.timeline import timeline_for
+from backend.src.timeline import profile_for, timeline_for
+from backend.src.vectorstore import final_production_search
 
 warnings.filterwarnings("ignore", category=UserWarning, module="urllib3")
 
@@ -15,10 +15,11 @@ HARD_FLOOR = -10.0
 
 
 # ── RESPONSE SCHEMA ───────────────────────────────────────────────────────────
-# Note what is NOT here: `path`. Career steps are built in code from
-# profiles.json (see timeline.py), because the model was returning them out of
-# chronological order and occasionally dropping a degree. What the model cannot
-# generate, it cannot get wrong.
+# Note what is NOT here: `path` and `linkedin_url`. Career steps are sorted in
+# code from profiles.json (see timeline.py), and the LinkedIn URL is looked up
+# by name. The model was returning career steps out of chronological order, and
+# a URL is exactly the kind of value a model will happily invent. What the model
+# cannot generate, it cannot get wrong.
 
 class MatchedProfile(BaseModel):
     name: str = Field(
@@ -30,8 +31,12 @@ class MatchedProfile(BaseModel):
     )
     skills: List[str] = Field(
         default=[],
-        description="Up to 8 skills from this person's profile block that are relevant to the student's question. Skills are technologies, tools, or capabilities only. Never job titles, company names, or role names."
-        )
+        description=(
+            "Up to 8 skills from this person's profile block that are relevant to "
+            "the student's question. Skills are technologies, tools, or capabilities "
+            "only. Never job titles, company names, or role names."
+        ),
+    )
     why_relevant: str = Field(
         description="One sentence on why this person's path matches what the student asked. Facts only."
     )
@@ -109,7 +114,7 @@ def generate_context_prompt(query: str):
 
 ### CRUCIAL GENERATION RULES (STRICT COMPLIANCE REQUIRED):
 1. ONE ENTRY PER PROFILE: Produce exactly one match entry for each profile block in the context above. Never invent a person who does not appear there.
-2. NAMES MUST BE EXACT: Copy each name character for character from its profile block. The name is used to look up their career timeline, so an altered name breaks the result.
+2. NAMES MUST BE EXACT: Copy each name character for character from its profile block. The name is used to look up their career timeline and LinkedIn URL, so an altered name silently breaks both.
 3. NO TECHNOLOGY HALLUCINATION: Only list a technology, framework, language, or tool for a person if it explicitly appears inside that specific person's profile block. Do not attach the student's query technologies to a person by default.
 4. NO PERSONA MERGING: Each entry describes one person only. Never move a title, company, certification, or milestone from one profile block into another person's entry.
 5. NO SPECULATION: Facts only. Never use "likely", "probably", "presumably", "might", or "possibly". If it is not written in their block, leave the field out.
@@ -120,6 +125,17 @@ def generate_context_prompt(query: str):
 """
     return {"prompt": prompt, "low_confidence": low_confidence}
 
+
+
+def clean_url(url):
+    if not url:
+        return None
+    url = url.strip()
+    # The model sometimes returns markdown: [text](https://...)
+    if "](" in url:
+        url = url.split("](", 1)[1].rstrip(")")
+    url = url.replace("https://", "").replace("http://", "").strip("[]() ")
+    return url or None
 
 # ── STAGE 3: GENERATION ───────────────────────────────────────────────────────
 
@@ -132,6 +148,21 @@ def _empty_response(message):
         "no_match": True,
         "message": message,
     }
+
+
+def enrich_matches(matches):
+    """
+    Attach the timeline and the LinkedIn URL by looking each person up in
+    profiles.json by name. Both lookups degrade quietly: an unresolved name
+    yields an empty timeline and no link rather than raising, so one bad name
+    costs a card's detail instead of the whole response.
+    """
+    for match in matches:
+        name = match.get("name")
+        record = profile_for(name) or {}
+        match["timeline"] = timeline_for(name)
+        match["linkedin_url"] = clean_url(record.get("linkedin_url"))
+    return matches
 
 
 def ask_career_navigator(query: str) -> dict:
@@ -155,30 +186,23 @@ def ask_career_navigator(query: str) -> dict:
 
     payload = result.model_dump()
 
-    # ── Attach the timeline from code, not from the model ──
-    # timeline_for returns [] when the name does not resolve, so a bad name
-    # degrades to a card without a path rather than raising.
-    for match in payload.get("matches", []):
-        match["timeline"] = timeline_for(match.get("name"))
+    enrich_matches(payload.get("matches", []))
 
     payload["low_confidence"] = pipeline_data["low_confidence"]
     payload["no_match"] = False
     payload["message"] = ""
     return payload
 
+
 if __name__ == "__main__":
-    # valid_query = "worked on vue.js, c# and .net"
-    garbage_query = "how to bake sourdough bread"
-    new_query = "who is good in knowledge graph"
+    queries = [
+        "how to bake sourdough bread",
+        "who is good in knowledge graph",
+        "I studied electronics engineering and want to move into data analysis",
+    ]
 
-    # valid_prompt = generate_context_prompt(valid_query)
-    # print(valid_prompt)
-
-    # garbage_prompt = generate_context_prompt(garbage_query)
-    # print(f"Result for garbage query: '{garbage_prompt}'")
-
-    # print(ask_career_navigator(valid_query))
-    # print("\n garbage", garbage_query)
-    print(json.dumps(ask_career_navigator(garbage_query), indent=2))
-    print(json.dumps(ask_career_navigator(new_query), indent=2))
-
+    for q in queries:
+        print("\n" + "=" * 70)
+        print("QUERY:", q)
+        print("=" * 70)
+        print(json.dumps(ask_career_navigator(q), indent=2))

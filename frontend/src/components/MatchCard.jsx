@@ -30,6 +30,17 @@ export default function MatchCard({ match }) {
           <SkillTags skills={match.skills} />
         </div>
       )}
+
+
+      {match.linkedin_url && (
+        <a
+          className="match__link"
+          href={`https://${match.linkedin_url.replace(/^https?:\/\//, "")}`}
+          target="_blank"
+          rel="noopener noreferrer">
+          Connect on LinkedIn
+        </a>
+      )}
     </article>
   );
 }
